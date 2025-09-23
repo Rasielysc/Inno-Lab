@@ -147,7 +147,7 @@
 
     <!-- Top Bar -->
     <div class="topbar">
-        <img src="assets/logo.png" alt="Company Logo" class="logo rounded-full">
+        <img src="https://placehold.co/40x40/703D29/FFFFFF?text=Logo" alt="Company Logo" class="logo rounded-full">
     </div>
 
     <!-- Main Content -->
@@ -211,40 +211,66 @@
                     <div class="space-y-2">
                         <div class="result-item">
                             <span class="font-bold">Car Parking Bays (CPK):</span>
-                            <span id="cpkResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="cpkFormula" class="formula"></span>
+                                <span id="cpkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item" id="visitorRow">
                             <span class="font-bold">Visitor Parking Bays:</span>
-                            <span id="visitorCpkResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="visitorCpkFormula" class="formula"></span>
+                                <span id="visitorCpkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
-                        <!-- New row for Total Car Parking Bays -->
                         <div class="result-item" id="totalCpkRow">
                             <span class="font-bold">Total Car Parking Bays:</span>
-                            <span id="totalCpkResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="totalCpkFormula" class="formula"></span>
+                                <span id="totalCpkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item">
                             <span class="font-bold">Motorcycle Parking Bays (MPK):</span>
-                            <span id="mpkResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="mpkFormula" class="formula"></span>
+                                <span id="mpkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item">
                             <span class="font-bold">Total Parking Bays (TLK):</span>
-                            <span id="tlkResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="tlkFormula" class="formula"></span>
+                                <span id="tlkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item">
-                            <span class="font-bold">E-hailing Pick-up Bays:</span>
-                            <span id="ehailingMpkResult" class="text-right">0</span>
+                            <span class="font-bold">E-hailing TLM P-hailing:</span>
+                            <span class="flex items-center">
+                                <span id="ehailingMpkFormula" class="formula"></span>
+                                <span id="ehailingMpkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item">
-                            <span class="font-bold">E-hailing Drop-off Bays:</span>
-                            <span id="ehailingCpkResult" class="text-right">0</span>
+                            <span class="font-bold">E-hailing TLK P-hailing:</span>
+                            <span class="flex items-center">
+                                <span id="ehailingCpkFormula" class="formula"></span>
+                                <span id="ehailingCpkResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item">
                             <span class="font-bold">EV Charging Bays (EVCB):</span>
-                            <span id="evcbResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="evcbFormula" class="formula"></span>
+                                <span id="evcbResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                         <div class="result-item">
                             <span class="font-bold">Disabled Bays (OKU):</span>
-                            <span id="okuResult" class="text-right">0</span>
+                            <span class="flex items-center">
+                                <span id="okuFormula" class="formula"></span>
+                                <span id="okuResult" class="text-right ml-2">0</span>
+                            </span>
                         </div>
                     </div>
                     <button type="button" onclick="exportToExcel()" class="btn-black w-full mt-4">Export to Excel</button>
@@ -252,7 +278,7 @@
 
                 <!-- Back to Main Menu Button -->
                 <div class="flex justify-center mt-8">
-                    <a href="index.html" class="button-grey w-full md:w-1/3 flex items-center justify-center">
+                    <a href="main.html" class="button-grey w-full md:w-1/3 flex items-center justify-center">
                         Back to Main Menu
                     </a>
                 </div>
@@ -262,239 +288,279 @@
 
     <script>
         const parkingRules = {
-            'lowCostFlats': { cpkPerUnit: 1, mpkCalc: (units) => Math.ceil(units * 0.5), ehailing: false, cpkVisitorPercent: 0 },
-            'mediumCostFlatI': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.3), ehailing: false },
-            'mediumCostFlatII': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.3), ehailing: false },
-            'affordableHouse': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.3), ehailing: false },
-            'primaHousing': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.1), ehailing: false },
-            'madaniHousing': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.5), ehailing: false },
-            'highCostFlatsI': { cpkPerUnit: 2, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.1), ehailing: false },
-            'highCostFlatsII': { cpkPerUnit: 2.2, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.05), ehailing: false },
-            'highCostFlatsIII': { cpkPerUnit: 2.5, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.ceil(units * 0.05), ehailing: false },
-            'servicedApartment800': { gfaBased: true, cpkCalc: { zone1: 1000, zone2: 800, zone3: 500 }, cpkGfaDeduct: 0.35, cpkVisitorPercent: 0.1, mpkCalc: (gfa) => Math.ceil(gfa / 2000), ehailing: false },
-            'servicedApartment450': { gfaBased: true, cpkCalc: { zone1: 1000, zone2: 800, zone3: 500 }, cpkGfaDeduct: 0.35, cpkVisitorPercent: 0, mpkCalc: (gfa) => Math.ceil(gfa / 2000), ehailing: false },
-            'commercial': { gfaBased: true, cpkCalc: { zone1: 1000, zone2: 800, zone3: 500 }, cpkGfaDeduct: 0.35, mpkCalc: (gfa) => Math.ceil(gfa / 2000), ehailing: true }
+            'lowCostFlats': { cpkPerUnit: 1, mpkCalc: (units) => Math.round(units * 0.5), ehailing: false, cpkVisitorPercent: 0, mpkFormula: 'Units x 50%' },
+            'mediumCostFlatI': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.3), ehailing: false, mpkFormula: 'Units x 30%' },
+            'mediumCostFlatII': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.3), ehailing: false, mpkFormula: 'Units x 30%' },
+            'affordableHouse': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.3), ehailing: false, mpkFormula: 'Units x 30%' },
+            'primaHousing': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.1), ehailing: false, mpkFormula: 'Units x 10%' },
+            'madaniHousing': { cpkPerUnit: 1, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.5), ehailing: false, mpkFormula: 'Units x 50%' },
+            'highCostFlatsI': { cpkPerUnit: 2, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.1), ehailing: false, mpkFormula: 'Units x 10%' },
+            'highCostFlatsII': { cpkPerUnit: 2.2, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.05), ehailing: false, mpkFormula: 'Units x 5%' },
+            'highCostFlatsIII': { cpkPerUnit: 2.5, cpkVisitorPercent: 0.1, mpkCalc: (units) => Math.round(units * 0.05), ehailing: false, mpkFormula: 'Units x 5%' },
+            'servicedApartment800': { gfaBased: true, cpkCalc: { zone1: 1000, zone2: 800, zone3: 500 }, cpkGfaDeduct: 0.35, cpkVisitorPercent: 0.1, mpkCalc: (gfa) => Math.round(gfa / 2000), ehailing: false, mpkFormula: 'GFA / 2000 sqft' },
+            'servicedApartment450': { gfaBased: true, cpkCalc: { zone1: 1000, zone2: 800, zone3: 500 }, cpkGfaDeduct: 0.35, cpkVisitorPercent: 0, mpkCalc: (gfa) => Math.round(gfa / 2000), ehailing: false, mpkFormula: 'GFA / 2000 sqft' },
+            'commercial': { gfaBased: true, mpkCalc: (gfa) => Math.round(gfa / 2000), ehailing: true, cpkVisitorPercent: 0, mpkFormula: 'GFA / 2000 sqft' },
         };
 
-        // Global object to store calculation results
-        let parkingResults = {};
+        const buildingTypeSelect = document.getElementById('buildingType');
+        const unitsInputContainer = document.getElementById('unitsInputContainer');
+        const gfaInputContainer = document.getElementById('gfaInputContainer');
+        const zoneInputContainer = document.getElementById('zoneInputContainer');
+        const resultsDiv = document.getElementById('results');
+        const messageBox = document.getElementById('messageBox');
+
+        buildingTypeSelect.addEventListener('change', () => {
+            const type = buildingTypeSelect.value;
+            const rules = parkingRules[type];
+
+            unitsInputContainer.classList.add('hidden');
+            gfaInputContainer.classList.add('hidden');
+            zoneInputContainer.classList.add('hidden');
+            resultsDiv.classList.add('hidden');
+            hideMessage();
+
+            if (rules) {
+                if (rules.gfaBased) {
+                    gfaInputContainer.classList.remove('hidden');
+                    zoneInputContainer.classList.remove('hidden');
+                } else {
+                    unitsInputContainer.classList.remove('hidden');
+                }
+            }
+        });
 
         function showMessage(message) {
-            const messageBox = document.getElementById('messageBox');
-            messageBox.innerText = message;
+            messageBox.textContent = message;
             messageBox.classList.remove('hidden');
         }
 
-        function clearMessage() {
-            const messageBox = document.getElementById('messageBox');
-            messageBox.innerText = '';
+        function hideMessage() {
+            messageBox.textContent = '';
             messageBox.classList.add('hidden');
         }
 
-        function updateForm() {
-            const buildingType = document.getElementById('buildingType').value;
-            const unitsContainer = document.getElementById('unitsInputContainer');
-            const gfaContainer = document.getElementById('gfaInputContainer');
-            const zoneContainer = document.getElementById('zoneInputContainer');
-            const resultsDiv = document.getElementById('results');
-            const visitorRow = document.getElementById('visitorRow');
-
-            unitsContainer.classList.add('hidden');
-            gfaContainer.classList.add('hidden');
-            zoneContainer.classList.add('hidden');
-            resultsDiv.classList.add('hidden');
-            clearMessage();
-
-            if (buildingType && parkingRules[buildingType]) {
-                const rule = parkingRules[buildingType];
-                if (rule.gfaBased) {
-                    gfaContainer.classList.remove('hidden');
-                    zoneContainer.classList.remove('hidden');
-                } else {
-                    unitsContainer.classList.remove('hidden');
-                }
-            }
-        }
-
-        document.getElementById('buildingType').addEventListener('change', updateForm);
-
         function calculateParking() {
-            clearMessage();
-            const buildingType = document.getElementById('buildingType').value;
-            const units = parseInt(document.getElementById('numberOfUnits').value);
-            const gfa = parseFloat(document.getElementById('gfa').value);
-            const zone = document.getElementById('zone').value;
-            const resultsDiv = document.getElementById('results');
-            const visitorRow = document.getElementById('visitorRow');
+            hideMessage();
+            const buildingType = buildingTypeSelect.value;
+            const rules = parkingRules[buildingType];
 
-            if (!buildingType) {
-                showMessage('Please select a building type.');
+            if (!rules) {
+                showMessage("Please select a building type.");
                 return;
             }
 
-            const rule = parkingRules[buildingType];
-            let cpk = 0;
-            let residentialCpk = 0;
-            let visitorCpk = 0;
-            let mpk = 0;
-            let ehailingCpk = 0;
-            let ehailingMpk = 0;
-            let totalBays = 0;
+            let cpk, visitorCpk, mpk, ehailingCpk, ehailingMpk, evcb, oku;
+            let baseValue;
+            let cpkFormulaText, visitorCpkFormulaText, totalCpkFormulaText, mpkFormulaText, ehailingCpkFormulaText, ehailingMpkFormulaText, evcbFormulaText, okuFormulaText;
 
-            let cpkFormula = "";
-            let visitorCpkFormula = "";
-            let mpkFormula = "";
-            let ehailingCpkFormula = "";
-            let ehailingMpkFormula = "";
-            let evcbFormula = "";
-            let okuFormula = "";
-            
-            let parameter = "";
+            if (rules.gfaBased) {
+                const gfa = parseFloat(document.getElementById('gfa').value);
+                const zone = document.getElementById('zone').value;
 
-            if (rule.gfaBased) {
                 if (isNaN(gfa) || gfa <= 0) {
-                    showMessage('Please enter a valid Gross Floor Area.');
+                    showMessage("Please enter a valid Gross Floor Area (GFA) greater than 0.");
                     return;
                 }
-                const cpkPerSqft = rule.cpkCalc[zone];
-                const gfaDeducted = gfa * (1 - rule.cpkGfaDeduct);
-                residentialCpk = Math.ceil(gfaDeducted / cpkPerSqft);
-                cpkFormula = `(${gfa.toFixed(0)} - 35%) / ${cpkPerSqft}`;
-                parameter = `GFA: ${gfa} sqft`;
+                baseValue = gfa;
 
-                if (rule.cpkVisitorPercent) {
-                    visitorCpk = Math.ceil(residentialCpk * rule.cpkVisitorPercent);
-                    visitorRow.classList.remove('hidden');
-                    visitorCpkFormula = `${residentialCpk} * ${Math.round(rule.cpkVisitorPercent * 100)}%`;
-                } else {
-                    visitorRow.classList.add('hidden');
-                    visitorCpkFormula = `Not applicable`;
-                }
-                cpk = residentialCpk + visitorCpk;
-
-                mpk = rule.mpkCalc(gfa);
-                mpkFormula = `${gfa.toFixed(0)} / 2000`;
-
-                if (rule.ehailing) {
-                    if (gfa >= 100000 && gfa <= 199999) { ehailingMpk = 10; ehailingCpk = 2; }
-                    else if (gfa >= 200000 && gfa <= 299999) { ehailingMpk = 12; ehailingCpk = 3; }
-                    else if (gfa >= 300000 && gfa <= 399999) { ehailingMpk = 14; ehailingCpk = 4; }
-                    else if (gfa >= 400000 && gfa <= 499999) { ehailingMpk = 16; ehailingCpk = 5; }
-                    else if (gfa >= 500000) { ehailingMpk = 20; ehailingCpk = 5; }
-                    ehailingCpkFormula = "Based on trade space area";
-                    ehailingMpkFormula = "Based on trade space area";
-                }
-            } else {
-                if (isNaN(units) || units <= 0) {
-                    showMessage('Please enter a valid number of units.');
-                    return;
-                }
-                residentialCpk = Math.ceil(units * rule.cpkPerUnit);
-                cpkFormula = `${units} * ${rule.cpkPerUnit} bay/unit`;
-                parameter = `Units: ${units}`;
-                if (rule.cpkVisitorPercent) {
-                    visitorCpk = Math.ceil(residentialCpk * rule.cpkVisitorPercent);
-                    visitorRow.classList.remove('hidden');
-                    visitorCpkFormula = `${residentialCpk} * ${Math.round(rule.cpkVisitorPercent * 100)}%`;
-                } else {
-                    visitorRow.classList.add('hidden');
-                    visitorCpkFormula = `Not applicable`;
-                }
-                cpk = residentialCpk + visitorCpk;
+                let cpkDeduction;
+                let cpkDivisor;
                 
-                mpk = rule.mpkCalc(units);
-                mpkFormula = `${units} * ${Math.round(rule.mpkCalc(1) * 100)}%`;
-                ehailingCpkFormula = `Not applicable`;
-                ehailingMpkFormula = `Not applicable`;
+                if (buildingType === 'commercial') {
+                    cpkDeduction = 0.30;
+                    switch(zone) {
+                        case 'zone1':
+                            cpkDivisor = 1000;
+                            break;
+                        case 'zone2':
+                            cpkDivisor = 800;
+                            break;
+                        case 'zone3':
+                            cpkDivisor = 500;
+                            break;
+                        default:
+                            showMessage("Invalid zone selected.");
+                            return;
+                    }
+                } else { // Serviced Apartments
+                    cpkDeduction = rules.cpkGfaDeduct;
+                    cpkDivisor = rules.cpkCalc[zone];
+                }
+                
+                const cpkBase = gfa * (1 - cpkDeduction);
+                cpk = Math.round(cpkBase / cpkDivisor);
+                cpkFormulaText = `(GFA - ${cpkDeduction * 100}%) / ${cpkDivisor} sqft`;
+
+                mpk = rules.mpkCalc(baseValue);
+                mpkFormulaText = rules.mpkFormula;
+
+                if (rules.ehailing) {
+                    if (gfa >= 100000 && gfa <= 199999) {
+                        ehailingMpk = 10;
+                        ehailingCpk = 2;
+                        ehailingCpkFormulaText = 'Tiered rule based on GFA';
+                        ehailingMpkFormulaText = 'Tiered rule based on GFA';
+                    } else if (gfa >= 200000 && gfa <= 299999) {
+                        ehailingMpk = 12;
+                        ehailingCpk = 3;
+                        ehailingCpkFormulaText = 'Tiered rule based on GFA';
+                        ehailingMpkFormulaText = 'Tiered rule based on GFA';
+                    } else if (gfa >= 300000 && gfa <= 399999) {
+                        ehailingMpk = 14;
+                        ehailingCpk = 4;
+                        ehailingCpkFormulaText = 'Tiered rule based on GFA';
+                        ehailingMpkFormulaText = 'Tiered rule based on GFA';
+                    } else if (gfa >= 400000 && gfa <= 499999) {
+                        ehailingMpk = 16;
+                        ehailingCpk = 5;
+                        ehailingCpkFormulaText = 'Tiered rule based on GFA';
+                        ehailingMpkFormulaText = 'Tiered rule based on GFA';
+                    } else if (gfa >= 500000) {
+                        ehailingMpk = 20;
+                        ehailingCpk = 5;
+                        ehailingCpkFormulaText = 'Tiered rule based on GFA';
+                        ehailingMpkFormulaText = 'Tiered rule based on GFA';
+                    } else {
+                        ehailingMpk = 0;
+                        ehailingCpk = 0;
+                        ehailingCpkFormulaText = 'N/A (<100,000 sqft)';
+                        ehailingMpkFormulaText = 'N/A (<100,000 sqft)';
+                    }
+                } else {
+                    ehailingCpk = rules.ehailing ? 2 : 0;
+                    ehailingMpk = rules.ehailing ? 2 : 0;
+                    ehailingCpkFormulaText = rules.ehailing ? 'Fixed 2 bays' : 'N/A';
+                    ehailingMpkFormulaText = rules.ehailing ? 'Fixed 2 bays' : 'N/A';
+                }
+
+                visitorCpk = 0; // Commercial buildings have no visitor parking based on new rule
+                visitorCpkFormulaText = 'N/A';
+            } else {
+                const units = parseInt(document.getElementById('numberOfUnits').value);
+                if (isNaN(units) || units <= 0) {
+                    showMessage("Please enter a valid number of units greater than 0.");
+                    return;
+                }
+                baseValue = units;
+                cpk = Math.round(units * rules.cpkPerUnit);
+                cpkFormulaText = `${units} units x ${rules.cpkPerUnit}`;
+
+                visitorCpk = Math.round(cpk * rules.cpkVisitorPercent);
+                visitorCpkFormulaText = `${cpk} bays x ${rules.cpkVisitorPercent * 100}%`;
+
+                mpk = rules.mpkCalc(baseValue);
+                mpkFormulaText = rules.mpkFormula;
+
+                ehailingCpk = rules.ehailing ? 2 : 0;
+                ehailingMpk = rules.ehailing ? 2 : 0;
+                ehailingCpkFormulaText = rules.ehailing ? 'Fixed 2 bays' : 'N/A';
+                ehailingMpkFormulaText = rules.ehailing ? 'Fixed 2 bays' : 'N/A';
             }
 
-            totalBays = cpk + mpk;
+            const totalCpk = cpk + visitorCpk;
+            totalCpkFormulaText = `${cpk} + ${visitorCpk}`;
 
-            // EV Charging Bays (EVCB) calculation based on TLK
-            if (totalBays <= 50) { evcb = 1; evcbFormula = `1 EVCB for up to 50 TLK`; }
-            else if (totalBays <= 100) { evcb = 2; evcbFormula = `2 EVCB for up to 100 TLK`; }
-            else { evcb = 2 + Math.floor((totalBays - 100) / 100); evcbFormula = `2 + (TLK - 100) / 100`; }
+            const tlk = totalCpk;
+            tlkFormulaText = `Total Car Parking Bays`;
 
-            // Disabled (OKU) parking calculation based on CPK
-            if (cpk <= 25) { oku = 1; okuFormula = `1 OKU for up to 25 CPK`; }
-            else if (cpk <= 50) { oku = 2; okuFormula = `2 OKU for 26-50 CPK`; }
-            else if (cpk <= 100) { oku = 4; okuFormula = `4 OKU for 51-100 CPK`; }
-            else if (cpk <= 200) { oku = 6; okuFormula = `6 OKU for 101-200 CPK`; }
-            else { oku = 6 + Math.floor((cpk - 200) / 100); okuFormula = `6 + (CPK - 200) / 100`; }
+            // EVCB Calculation based on new rules
+            if (tlk <= 50) {
+                evcb = 1;
+                evcbFormulaText = 'Tiered rule (1 bay)';
+            } else if (tlk <= 100) {
+                evcb = 2;
+                evcbFormulaText = 'Tiered rule (2 bays)';
+            } else {
+                const additionalBays = Math.round((tlk - 100) / 100);
+                evcb = 2 + additionalBays;
+                evcbFormulaText = `2 + round((${tlk} - 100) / 100)`;
+            }
 
-            // Store results in the global object
-            parkingResults = {
-                buildingType: document.getElementById('buildingType').options[document.getElementById('buildingType').selectedIndex].text,
-                parameter: parameter,
-                residentialCpk: residentialCpk,
-                visitorCpk: visitorCpk,
-                totalCpk: cpk,
-                mpk: mpk,
-                totalBays: totalBays,
-                ehailingCpk: ehailingCpk,
-                ehailingMpk: ehailingMpk,
-                evcb: evcb,
-                oku: oku,
-                cpkFormula: cpkFormula,
-                visitorCpkFormula: visitorCpkFormula,
-                mpkFormula: mpkFormula,
-                ehailingCpkFormula: ehailingCpkFormula,
-                ehailingMpkFormula: ehailingMpkFormula,
-                evcbFormula: evcbFormula,
-                okuFormula: okuFormula
-            };
+            // OKU Calculation based on new rules
+            if (totalCpk <= 25) {
+                oku = 1;
+                okuFormulaText = 'Tiered rule (1 bay)';
+            } else if (totalCpk <= 50) {
+                oku = 2;
+                okuFormulaText = 'Tiered rule (2 bays)';
+            } else if (totalCpk <= 100) {
+                oku = 4;
+                okuFormulaText = 'Tiered rule (4 bays)';
+            } else if (totalCpk <= 200) {
+                oku = 6;
+                okuFormulaText = 'Tiered rule (6 bays)';
+            } else {
+                const additionalBays = Math.round((totalCpk - 200) / 100);
+                oku = 6 + additionalBays;
+                okuFormulaText = `6 + round((${totalCpk} - 200) / 100)`;
+            }
 
-            document.getElementById('cpkResult').innerHTML = `${residentialCpk} <span class="formula">(${cpkFormula})</span>`;
-            document.getElementById('visitorCpkResult').innerHTML = `${visitorCpk} <span class="formula">(${visitorCpkFormula})</span>`;
-            document.getElementById('totalCpkResult').innerHTML = `${cpk}`;
-            document.getElementById('mpkResult').innerHTML = `${mpk} <span class="formula">(${mpkFormula})</span>`;
-            document.getElementById('tlkResult').innerHTML = `${totalBays}`;
-            document.getElementById('ehailingCpkResult').innerHTML = `${ehailingCpk} <span class="formula">(${ehailingCpkFormula})</span>`;
-            document.getElementById('ehailingMpkResult').innerHTML = `${ehailingMpk} <span class="formula">(${ehailingMpkFormula})</span>`;
-            document.getElementById('evcbResult').innerHTML = `${evcb} <span class="formula">(${evcbFormula})</span>`;
-            document.getElementById('okuResult').innerHTML = `${oku} <span class="formula">(${okuFormula})</span>`;
+            document.getElementById('cpkResult').textContent = cpk;
+            document.getElementById('cpkFormula').textContent = cpkFormulaText;
+
+            document.getElementById('visitorCpkResult').textContent = visitorCpk;
+            document.getElementById('visitorCpkFormula').textContent = visitorCpkFormulaText;
+
+            document.getElementById('totalCpkResult').textContent = totalCpk;
+            document.getElementById('totalCpkFormula').textContent = totalCpkFormulaText;
+
+            document.getElementById('mpkResult').textContent = mpk;
+            document.getElementById('mpkFormula').textContent = mpkFormulaText;
+
+            document.getElementById('tlkResult').textContent = tlk;
+            document.getElementById('tlkFormula').textContent = tlkFormulaText;
+
+            document.getElementById('ehailingCpkResult').textContent = ehailingCpk;
+            document.getElementById('ehailingCpkFormula').textContent = ehailingCpkFormulaText;
+
+            document.getElementById('ehailingMpkResult').textContent = ehailingMpk;
+            document.getElementById('ehailingMpkFormula').textContent = ehailingMpkFormulaText;
+
+            document.getElementById('evcbResult').textContent = evcb;
+            document.getElementById('evcbFormula').textContent = evcbFormulaText;
+
+            document.getElementById('okuResult').textContent = oku;
+            document.getElementById('okuFormula').textContent = okuFormulaText;
+
+            if (rules.cpkVisitorPercent === 0) {
+                document.getElementById('visitorRow').classList.add('hidden');
+            } else {
+                document.getElementById('visitorRow').classList.remove('hidden');
+            }
+
             resultsDiv.classList.remove('hidden');
         }
 
         function exportToExcel() {
-            if (Object.keys(parkingResults).length === 0) {
-                showMessage("Please calculate the parking requirements first.");
-                return;
+            const buildingType = document.getElementById('buildingType').value;
+            const results = {
+                'Car Parking Bays (CPK)': document.getElementById('cpkResult').textContent,
+                'Visitor Parking Bays': document.getElementById('visitorCpkResult').textContent,
+                'Total Car Parking Bays': document.getElementById('totalCpkResult').textContent,
+                'Motorcycle Parking Bays (MPK)': document.getElementById('mpkResult').textContent,
+                'Total Parking Bays (TLK)': document.getElementById('tlkResult').textContent,
+                'E-hailing TLM P-hailing': document.getElementById('ehailingMpkResult').textContent,
+                'E-hailing TLK P-hailing': document.getElementById('ehailingCpkResult').textContent,
+                'EV Charging Bays (EVCB)': document.getElementById('evcbResult').textContent,
+                'Disabled Bays (OKU)': document.getElementById('okuResult').textContent
+            };
+
+            let excelData = `Parking Requirement for ${buildingType}\n\n`;
+            for (const key in results) {
+                excelData += `${key},${results[key]}\n`;
             }
 
-            const header = `"Category","Residential Car Bays","Visitor Bays","Total Car Bays","Motorcycle Bays","Total Parking Bays","E-hailing Pick-up Bays","E-hailing Drop-off Bays","EV Charging Bays","Disabled Bays"\n`;
-            
-            const buildingTypeRow = `"Building Type","${parkingResults.buildingType}",,`
-                                  + `,,,,,,\n`;
-
-            const parameterRow = `"Parameter","${parkingResults.parameter}",,`
-                                  + `,,,,,,\n`;
-
-            const formulaRow = `"Calculation Formula","${parkingResults.cpkFormula}",`
-                             + `"${parkingResults.visitorCpkFormula}","","${parkingResults.mpkFormula}",`
-                             + `"${parkingResults.totalBays}","${parkingResults.ehailingMpkFormula}",`
-                             + `"${parkingResults.ehailingCpkFormula}","${parkingResults.evcbFormula}",`
-                             + `"${parkingResults.okuFormula}"\n`;
-
-            const requirementRow = `"Required Bays",`
-                                 + `"${parkingResults.residentialCpk}","${parkingResults.visitorCpk}",`
-                                 + `"${parkingResults.totalCpk}","${parkingResults.mpk}",`
-                                 + `"${parkingResults.totalBays}","${parkingResults.ehailingMpk}",`
-                                 + `"${parkingResults.ehailingCpk}","${parkingResults.evcb}",`
-                                 + `"${parkingResults.oku}"\n`;
-
-            const csvContent = header + buildingTypeRow + parameterRow + formulaRow + requirementRow;
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([excelData], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "parking_requirements.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `parking_requirements_${buildingType}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     </script>
 </body>
