@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>UBBL Parking Requirement Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            text-align: justify;
+            background-color: #111;
+        }
+
+        .topbar {
+            background-color: #703D29;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+        }
+        .logo {
+            height: 40px;
+        }
+
+        .overlay {
+            min-height: 100vh;
+            padding-top: 4.5rem;
+        }
+
+        .section {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            margin-bottom: 4rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #111;
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .section-header {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #111;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        p.section-text {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            font-weight: 400;
+            color: #111;
+            margin-bottom: 1rem;
+        }
+
+        .button-grey {
+            background-color: #f3f4f6;
+            color: #111;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #888;
+            border-radius: 0.3rem;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        .button-grey:hover {
+            background-color: #e5e7eb;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .btn-black {
+            background-color: #000;
+            color: #fff;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.3rem;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+        }
+        .btn-black:hover {
+            background-color: #222;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .result-box {
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-top: 1.5rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .formula {
+            font-size: 0.75rem;
+            color: #4a4a4a;
+            margin-left: 0.5rem;
+        }
+        
+        .message-box {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 2rem; }
+            .section-header { font-size: 1rem; }
+            .section { padding: 1.5rem; margin-left: 1rem; margin-right: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="topbar">
+        <img src="assets/logo.png" alt="Company Logo" class="logo rounded-full">
+    </div>
+
+    <!-- Main Content -->
+    <div class="overlay">
+        <div class="max-w-5xl mx-auto space-y-12 py-12">
+
+            <!-- Main Title -->
+            <h1 class="main-title">Selangor Parking Requirement Calculator</h1>
+
+            <!-- Calculator Section -->
+            <div class="section">
+                <div class="section-header">Calculate Parking Requirements</div>
+
+                <!-- Message Box for errors -->
+                <div id="messageBox" class="message-box hidden"></div>
+
+                <form id="parkingForm" class="space-y-4">
+                    <div>
+                        <label for="buildingType" class="block text-sm font-medium text-gray-700">Building Type</label>
+                        <select id="buildingType" name="buildingType" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="">Select a building type</option>
+                            <optgroup label="Residential">
+                                <option value="lowMediumLowCostApts">Low / Medium-Low Cost Apartments</option>
+                                <option value="mediumCostApts">Medium Cost Apartments</option>
+                                <option value="townhouses">Townhouses (Strata Scheme)</option>
+                                <option value="condoFreePriceApts">Condominium / Free-Price Apartments</option>
+                            </optgroup>
+                            <optgroup label="Commercial / Institutional">
+                                <option value="terraceShopOffices">Terrace & Shop Offices</option>
+                                <option value="affordableTerraceShops">Affordable Terrace Shops</option>
+                                <option value="semiDetachedDetachedShops">Semi-Detached & Detached Shops</option>
+                                <option value="businessComplex">Business Complex, Office, MICE</option>
+                            </optgroup>
+                            <optgroup label="Specific Building Types">
+                                <option value="hotel">Hotel</option>
+                                <option value="supermarket">Supermarket</option>
+                                <option value="sohoUnit">SOHO (Units > 450 sq ft)</option>
+                                <option value="sohoCommercial">SOHO (Commercial Floor Area)</option>
+                                <option value="servicedAptsUnit">Serviced Apartments (Units 550-1000 sq ft)</option>
+                                <option value="servicedAptsCommercial">Serviced Apartments (Commercial Floor Area)</option>
+                            </optgroup>
+                            <optgroup label="Industrial">
+                                <option value="individualSemiDetachedIndustry">Individual & Semi-Detached Industry</option>
+                                <option value="terraceLowCostIndustry">Terrace & Low-Cost Terrace Industry</option>
+                                <option value="multiStoreyIndustry">Multi-Storey Strata Industry</option>
+                                <option value="groundLevelIndustry">Ground-Level Strata Industry</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div id="unitsInputContainer" class="hidden">
+                        <label for="numberOfUnits" class="block text-sm font-medium text-gray-700">Number of Units</label>
+                        <input type="number" id="numberOfUnits" name="numberOfUnits" placeholder="e.g., 100" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 text-black">
+                    </div>
+
+                    <div id="gfaInputContainer" class="hidden">
+                        <label for="gfa" class="block text-sm font-medium text-gray-700">Gross Floor Area (GFA) in sqft</label>
+                        <input type="number" id="gfa" name="gfa" placeholder="e.g., 50000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 text-black">
+                    </div>
+                    
+                    <div id="gfaProductionContainer" class="hidden">
+                        <label for="gfaProduction" class="block text-sm font-medium text-gray-700">Production Area GFA in sqft</label>
+                        <input type="number" id="gfaProduction" name="gfaProduction" placeholder="e.g., 40000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 text-black">
+                    </div>
+
+                    <div id="gfaStorageContainer" class="hidden">
+                        <label for="gfaStorage" class="block text-sm font-medium text-gray-700">Storage Area GFA in sqft</label>
+                        <input type="number" id="gfaStorage" name="gfaStorage" placeholder="e.g., 10000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 text-black">
+                    </div>
+
+                    <button type="button" onclick="calculateParking()" class="button-grey w-full mt-4">Calculate</button>
+                </form>
+
+                <div id="results" class="result-box hidden">
+                    <div class="section-header">Required Parking Bays</div>
+                    <div class="space-y-2">
+                        <div class="result-item" id="cpkRow">
+                            <span class="font-bold">Car Parking Bays (CPK):</span>
+                            <span id="cpkResult" class="text-right">0</span>
+                        </div>
+                        <div class="result-item" id="visitorRow">
+                            <span class="font-bold">Visitor Parking Bays:</span>
+                            <span id="visitorCpkResult" class="text-right">0</span>
+                        </div>
+                         <div class="result-item" id="evcbRow">
+                            <span class="font-bold">EVCB Bays:</span>
+                            <span id="evcbResult" class="text-right">0</span>
+                        </div>
+                         <!-- Total Parking Bays (sum of CPK, Visitor, and EVCB) -->
+                        <div class="result-item" id="totalParkingBaysRow">
+                            <span class="font-bold">Total Parking Bays:</span>
+                            <span id="totalParkingBaysResult" class="text-right">0</span>
+                        </div>
+                        <div class="result-item" id="mpkRow">
+                            <span class="font-bold">Motorcycle Parking Bays (MPK):</span>
+                            <span id="mpkResult" class="text-right">0</span>
+                        </div>
+                        <div class="result-item" id="ladiesRow">
+                            <span class="font-bold">Ladies' Bays (TLKW):</span>
+                            <span id="ladiesResult" class="text-right">0</span>
+                        </div>
+                        <div class="result-item" id="lorryRow">
+                            <span class="font-bold">Lorry Bays (TLL):</span>
+                            <span id="lorryResult" class="text-right">0</span>
+                        </div>
+                        <div class="result-item" id="busLaybyRow">
+                             <span class="font-bold">Bus Bays (TLB) / Lay-by:</span>
+                            <span id="busLaybyResult" class="text-right">0</span>
+                        </div>
+                        <div class="result-item" id="accessibleRow">
+                            <span class="font-bold">Accessible Bays (OKU):</span>
+                            <span id="accessibleResult" class="text-right">0</span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="exportToExcel()" class="btn-black w-full mt-4">Export to Excel</button>
+                </div>
+
+                <!-- Back to Main Menu Button -->
+                <div class="flex justify-center mt-8">
+                    <a href="index.html" class="button-grey w-full md:w-1/3 flex items-center justify-center">
+                        Back to Main Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const parkingRules = {
+            "lowMediumLowCostApts": { type: "units", cpkPerUnit: 1, cpkVisitorPercent: 0.2, mpkCalc: (u) => Math.ceil(u / 2), okuPercent: 0.02, evcbPercent: 0.02 },
+            "mediumCostApts": { type: "units", cpkPerUnit: 2, cpkVisitorPercent: 0.2, mpkCalc: (u) => Math.ceil(u / 2), okuPercent: 0.02, evcbPercent: 0.02 },
+            "townhouses": { type: "units", cpkPerUnit: 2, cpkVisitorPercent: 0.2, mpkCalc: null, okuPercent: 0.02, evcbPercent: 0.02 },
+            "condoFreePriceApts": { type: "units", cpkPerUnit: 2, cpkVisitorPercent: 0.2, mpkPercentOfCpk: 0.2, okuPercent: 0.02, evcbPercent: 0.02 },
+            "terraceShopOffices": { type: "gfa", cpkGFA: 500, cpkVisitorPercent: 0.2, mpkGFA: 1000, okuPercent: 0.02, evcbPercent: 0.02 },
+            "affordableTerraceShops": { type: "gfa", cpkGFA: 500, cpkVisitorPercent: 0.2, mpkGFA: 1000, okuPercent: 0.02, evcbPercent: 0.02 },
+            "semiDetachedDetachedShops": { type: "gfa", cpkGFA: 500, cpkVisitorPercent: 0.2, mpkGFA: 1000, okuPercent: 0.02, evcbPercent: 0.02 },
+            "businessComplex": { type: "gfa", cpkGFA: 500, cpkVisitorPercent: 0.2, mpkGFA: 1000, ladiesPercent: 0.02, okuPercent: 0.02, evcbPercent: 0.02 },
+            "hotel": { type: "units", cpkPerUnit: 1/3, ladiesPercent: 0.02, okuPercent: 0.02, mpkCalc: () => 0, busLayby: true, evcbPercent: 0.02 },
+            "supermarket": { type: "gfa", cpkGFA: 500, cpkVisitorPercent: 0.2, mpkGFA: 1000, ladiesPercent: 0.02, okuPercent: 0.02, evcbPercent: 0.02 },
+            "sohoUnit": { type: "units", cpkPerUnit: 1, cpkVisitorPercent: 0.4, mpkPercentOfCpk: 0.2, okuPercent: 0.02, evcbPercent: 0.02 },
+            "sohoCommercial": { type: "gfa", cpkGFA: 500, mpkGFA: 1000, okuPercent: 0.02, evcbPercent: 0.02 },
+            "servicedAptsUnit": { type: "units", cpkPerUnit: 2, cpkVisitorPercent: 0.2, mpkPercentOfCpk: 0.2, okuPercent: 0.02, evcbPercent: 0.02 },
+            "servicedAptsCommercial": { type: "gfa", cpkGFA: 500, mpkGFA: 1000, okuPercent: 0.02, evcbPercent: 0.02 },
+            "individualSemiDetachedIndustry": { type: "gfa_split", cpkOfficeGFA: 500, cpkOfficeVisitorPercent: 0.1, cpkProductionGFA: 1000, mpkGFA: 2000, lorryGFA: 10000, okuPercent: 0.02, evcbPercent: 0.02 },
+            "terraceLowCostIndustry": { type: "gfa_split", cpkOfficeGFA: 500, cpkOfficeVisitorPercent: 0.1, cpkProductionGFA: 1000, mpkGFA: 2000, lorryUnits: 5, okuPercent: 0.02, evcbPercent: 0.02 },
+            "multiStoreyIndustry": { type: "gfa_split", cpkOfficeGFA: 500, cpkOfficeVisitorPercent: 0.1, cpkStorageGFA: 2500, mpkGFA: 2000, lorryUnits: 5, okuPercent: 0.02, evcbPercent: 0.02 },
+            "groundLevelIndustry": { type: "gfa_split", cpkOfficeGFA: 500, cpkOfficeVisitorPercent: 0.1, cpkStorageGFA: 2500, mpkGFA: 2000, lorryUnits: 5, okuPercent: 0.02, evcbPercent: 0.02 }
+        };
+
+        let parkingResults = {};
+
+        function showMessage(message) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.innerText = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        function clearMessage() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.innerText = '';
+            messageBox.classList.add('hidden');
+        }
+
+        function updateForm() {
+            const buildingType = document.getElementById('buildingType').value;
+            const unitsContainer = document.getElementById('unitsInputContainer');
+            const gfaContainer = document.getElementById('gfaInputContainer');
+            const gfaProductionContainer = document.getElementById('gfaProductionContainer');
+            const gfaStorageContainer = document.getElementById('gfaStorageContainer');
+            const resultsDiv = document.getElementById('results');
+
+            unitsContainer.classList.add('hidden');
+            gfaContainer.classList.add('hidden');
+            gfaProductionContainer.classList.add('hidden');
+            gfaStorageContainer.classList.add('hidden');
+            resultsDiv.classList.add('hidden');
+            clearMessage();
+
+            if (!buildingType) return;
+
+            const rule = parkingRules[buildingType];
+            if (rule.type === "units") {
+                unitsContainer.classList.remove('hidden');
+            } else if (rule.type === "gfa") {
+                gfaContainer.classList.remove('hidden');
+                document.getElementById('gfa').placeholder = "Gross Floor Area (GFA) in sqft";
+            } else if (rule.type === "gfa_split") {
+                gfaContainer.classList.remove('hidden');
+                document.getElementById('gfa').placeholder = "Office GFA in sqft";
+                if (rule.cpkProductionGFA) {
+                    gfaProductionContainer.classList.remove('hidden');
+                }
+                if (rule.cpkStorageGFA) {
+                    gfaStorageContainer.classList.remove('hidden');
+                }
+            }
+        }
+
+        document.getElementById('buildingType').addEventListener('change', updateForm);
+
+        function calculateParking() {
+            clearMessage();
+            const buildingType = document.getElementById('buildingType').value;
+            if (!buildingType) {
+                showMessage('Please select a building type.');
+                return;
+            }
+
+            const rule = parkingRules[buildingType];
+            let cpk = 0;
+            let visitorCpk = 0;
+            let mpk = 0;
+            let ladiesBays = 0;
+            let lorryBays = 0;
+            let busBays = 0;
+            let totalCarBays = 0;
+            let accessibleBays = 0;
+            let evcb = 0;
+
+            let cpkFormula = "";
+            let visitorCpkFormula = "";
+            let mpkFormula = "";
+            let ladiesFormula = "";
+            let lorryFormula = "";
+            let busFormula = "N/A";
+            let accessibleFormula = "";
+            let evcbFormula = "";
+
+            let parameter = "";
+
+            if (rule.type === "units") {
+                const units = parseInt(document.getElementById('numberOfUnits').value);
+                if (isNaN(units) || units <= 0) {
+                    showMessage('Please enter a valid number of units.');
+                    return;
+                }
+                parameter = `Units: ${units}`;
+                if (rule.cpkPerUnit) {
+                    cpk = Math.ceil(units * rule.cpkPerUnit);
+                    cpkFormula = `${units} units * ${rule.cpkPerUnit} bay/unit`;
+                } else {
+                    cpk = 0; // No rule found
+                    cpkFormula = "N/A";
+                }
+
+                if (rule.cpkVisitorPercent) {
+                    visitorCpk = Math.ceil(units * rule.cpkVisitorPercent);
+                    visitorCpkFormula = `${units} units * ${rule.cpkVisitorPercent * 100}%`;
+                } else {
+                    visitorCpk = 0;
+                    visitorCpkFormula = "N/A";
+                }
+                totalCarBays = cpk + visitorCpk;
+
+                if (rule.mpkCalc) {
+                    mpk = rule.mpkCalc(units);
+                    mpkFormula = `See rule for ${buildingType}`;
+                } else if (rule.mpkPercentOfCpk) {
+                    mpk = Math.ceil(totalCarBays * rule.mpkPercentOfCpk);
+                    mpkFormula = `${totalCarBays} total car bays * ${rule.mpkPercentOfCpk * 100}%`;
+                } else {
+                    mpk = 0;
+                    mpkFormula = "N/A";
+                }
+                
+                if (rule.busLayby) {
+                    if (units > 100) {
+                        busBays = Math.ceil(units / 100);
+                        busFormula = `${units} rooms / 100`;
+                    } else {
+                        busBays = 0;
+                        busFormula = "Min 1 for > 100 rooms";
+                    }
+                }
+
+            } else if (rule.type === "gfa") {
+                const gfa = parseFloat(document.getElementById('gfa').value);
+                if (isNaN(gfa) || gfa <= 0) {
+                    showMessage('Please enter a valid Gross Floor Area.');
+                    return;
+                }
+                parameter = `GFA: ${gfa} sqft`;
+
+                cpk = Math.ceil(gfa / rule.cpkGFA);
+                cpkFormula = `${gfa.toFixed(0)} sqft / ${rule.cpkGFA} sqft`;
+
+                if (rule.cpkVisitorPercent) {
+                    visitorCpk = Math.ceil(cpk * rule.cpkVisitorPercent);
+                    visitorCpkFormula = `${cpk} car bays * ${rule.cpkVisitorPercent * 100}%`;
+                } else {
+                    visitorCpk = 0;
+                    visitorCpkFormula = "N/A";
+                }
+                totalCarBays = cpk + visitorCpk;
+
+                if (rule.mpkGFA) {
+                    mpk = Math.ceil(gfa / rule.mpkGFA);
+                    mpkFormula = `${gfa.toFixed(0)} sqft / ${rule.mpkGFA} sqft`;
+                } else {
+                    mpk = 0;
+                    mpkFormula = "N/A";
+                }
+
+            } else if (rule.type === "gfa_split") {
+                const gfaOffice = parseFloat(document.getElementById('gfa').value);
+                let gfaProduction = 0;
+                let gfaStorage = 0;
+                if (rule.cpkProductionGFA) {
+                    gfaProduction = parseFloat(document.getElementById('gfaProduction').value);
+                }
+                if (rule.cpkStorageGFA) {
+                    gfaStorage = parseFloat(document.getElementById('gfaStorage').value);
+                }
+
+                if (isNaN(gfaOffice) || gfaOffice < 0 || (rule.cpkProductionGFA && (isNaN(gfaProduction) || gfaProduction < 0)) || (rule.cpkStorageGFA && (isNaN(gfaStorage) || gfaStorage < 0))) {
+                    showMessage('Please enter valid GFA values.');
+                    return;
+                }
+                parameter = `Office GFA: ${gfaOffice} sqft`;
+                if (gfaProduction > 0) parameter += `, Production GFA: ${gfaProduction} sqft`;
+                if (gfaStorage > 0) parameter += `, Storage GFA: ${gfaStorage} sqft`;
+
+                cpk = Math.ceil(gfaOffice / rule.cpkOfficeGFA);
+                cpkFormula = `Office: ${gfaOffice} sqft / ${rule.cpkOfficeGFA} sqft`;
+
+                visitorCpk = Math.ceil(cpk * rule.cpkOfficeVisitorPercent);
+                visitorCpkFormula = `${cpk} car bays * ${rule.cpkOfficeVisitorPercent * 100}%`;
+
+                if (rule.cpkProductionGFA) {
+                    const cpkProduction = Math.ceil(gfaProduction / rule.cpkProductionGFA);
+                    cpk += cpkProduction;
+                    cpkFormula += ` + Production: ${gfaProduction} sqft / ${rule.cpkProductionGFA} sqft`;
+                }
+                if (rule.cpkStorageGFA) {
+                    const cpkStorage = Math.ceil(gfaStorage / rule.cpkStorageGFA);
+                    cpk += cpkStorage;
+                    cpkFormula += ` + Storage: ${gfaStorage} sqft / ${rule.cpkStorageGFA} sqft`;
+                }
+                totalCarBays = cpk + visitorCpk;
+
+                if (rule.mpkGFA) {
+                    const totalGFA = gfaOffice + gfaProduction + gfaStorage;
+                    mpk = Math.ceil(totalGFA / rule.mpkGFA);
+                    mpkFormula = `Total GFA: ${totalGFA.toFixed(0)} sqft / ${rule.mpkGFA} sqft`;
+                }
+                
+                if (rule.lorryGFA) {
+                    const totalGFA = gfaOffice + gfaProduction + gfaStorage;
+                    lorryBays = Math.max(2, Math.ceil(totalGFA / rule.lorryGFA));
+                    lorryFormula = `max(2, ${totalGFA.toFixed(0)} sqft / ${rule.lorryGFA} sqft)`;
+                }
+                if (rule.lorryUnits) {
+                    const units = parseInt(document.getElementById('numberOfUnits').value) || 0;
+                    if (units > 0) {
+                        lorryBays = Math.ceil(units / rule.lorryUnits);
+                        lorryFormula = `${units} units / ${rule.lorryUnits}`;
+                    }
+                }
+            } else {
+                 showMessage('No calculation rule found for this building type.');
+                 return;
+            }
+
+            if (rule.ladiesPercent) {
+                ladiesBays = Math.ceil(totalCarBays * rule.ladiesPercent);
+                ladiesFormula = `${totalCarBays} total car bays * ${rule.ladiesPercent * 100}%`;
+            } else {
+                ladiesBays = 0;
+                ladiesFormula = "N/A";
+            }
+
+            if (rule.okuPercent) {
+                accessibleBays = Math.ceil(totalCarBays * rule.okuPercent);
+                accessibleFormula = `${totalCarBays} total car bays * ${rule.okuPercent * 100}%`;
+            } else {
+                // Tiered OKU rule as a fallback
+                if (totalCarBays <= 25) { accessibleBays = 1; accessibleFormula = `1 OKU for up to 25 CPK`; }
+                else if (totalCarBays <= 50) { accessibleBays = 2; accessibleFormula = `2 OKU for 26-50 CPK`; }
+                else if (totalCarBays <= 100) { accessibleBays = 4; accessibleFormula = `4 OKU for 51-100 CPK`; }
+                else if (totalCarBays <= 200) { accessibleBays = 6; accessibleFormula = `6 OKU for 101-200 CPK`; }
+                else { accessibleBays = 6 + Math.floor((totalCarBays - 200) / 100); accessibleFormula = `6 + (CPK - 200) / 100`; }
+            }
+
+            // New EVCB and final total calculation
+            evcb = Math.ceil(totalCarBays * rule.evcbPercent);
+            evcbFormula = `${totalCarBays} total car bays * ${rule.evcbPercent * 100}%`;
+            
+            const totalParkingBays = cpk + visitorCpk + evcb;
+            
+            parkingResults = {
+                buildingType: document.getElementById('buildingType').options[document.getElementById('buildingType').selectedIndex].text,
+                parameter: parameter,
+                cpk: cpk,
+                visitorCpk: visitorCpk,
+                totalCpk: totalParkingBays,
+                mpk: mpk,
+                ladies: ladiesBays,
+                lorry: lorryBays,
+                bus: busBays,
+                accessible: accessibleBays,
+                evcb: evcb,
+                cpkFormula: cpkFormula,
+                visitorCpkFormula: visitorCpkFormula,
+                mpkFormula: mpkFormula,
+                ladiesFormula: ladiesFormula,
+                lorryFormula: lorryFormula,
+                busFormula: busFormula,
+                accessibleFormula: accessibleFormula,
+                evcbFormula: evcbFormula
+            };
+
+            document.getElementById('cpkResult').innerHTML = `${cpk} <span class="formula">(${cpkFormula})</span>`;
+            document.getElementById('visitorCpkResult').innerHTML = `${visitorCpk} <span class="formula">(${visitorCpkFormula})</span>`;
+            document.getElementById('evcbResult').innerHTML = `${evcb} <span class="formula">(${evcbFormula})</span>`;
+            document.getElementById('totalParkingBaysResult').innerHTML = `${totalParkingBays}`;
+            document.getElementById('mpkResult').innerHTML = `${mpk} <span class="formula">(${mpkFormula})</span>`;
+            document.getElementById('ladiesResult').innerHTML = `${ladiesBays} <span class="formula">(${ladiesFormula})</span>`;
+            document.getElementById('lorryResult').innerHTML = `${lorryBays} <span class="formula">(${lorryFormula})</span>`;
+            document.getElementById('busLaybyResult').innerHTML = `${busBays} <span class="formula">(${busFormula})</span>`;
+            document.getElementById('accessibleResult').innerHTML = `${accessibleBays} <span class="formula">(${accessibleFormula})</span>`;
+
+            // Show/hide rows based on calculation
+            document.getElementById('visitorRow').classList.toggle('hidden', visitorCpk === 0);
+            document.getElementById('mpkRow').classList.toggle('hidden', mpk === 0);
+            document.getElementById('ladiesRow').classList.toggle('hidden', ladiesBays === 0);
+            document.getElementById('lorryRow').classList.toggle('hidden', lorryBays === 0);
+            document.getElementById('busLaybyRow').classList.toggle('hidden', busBays === 0);
+            document.getElementById('evcbRow').classList.toggle('hidden', evcb === 0);
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function exportToExcel() {
+            if (Object.keys(parkingResults).length === 0) {
+                showMessage("Please calculate the parking requirements first.");
+                return;
+            }
+
+            const header = `"Building Type","Parameter","CPK","Visitor Bays","EVCB Bays","Total Parking Bays","MPK","Ladies' Bays","Lorry Bays","Bus Bays","Accessible Bays"\n`;
+            
+            const dataRow = `"${parkingResults.buildingType}","${parkingResults.parameter}",`
+                            + `"${parkingResults.cpk}","${parkingResults.visitorCpk}","${parkingResults.evcb}","${parkingResults.totalCpk}",`
+                            + `"${parkingResults.mpk}","${parkingResults.ladies}","${parkingResults.lorry}",`
+                            + `"${parkingResults.bus}","${parkingResults.accessible}"\n`;
+
+            const formulaRow = `"Calculation Formula",,`
+                               + `"${parkingResults.cpkFormula}","${parkingResults.visitorCpkFormula}",`
+                               + `"${parkingResults.evcbFormula}",,`
+                               + `"${parkingResults.mpkFormula}","${parkingResults.ladiesFormula}",`
+                               + `"${parkingResults.lorryFormula}",`
+                               + `"${parkingResults.busFormula}","${parkingResults.accessibleFormula}"\n`;
+
+            const csvContent = header + dataRow + formulaRow;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "parking_requirements.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
