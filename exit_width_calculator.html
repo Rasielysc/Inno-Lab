@@ -82,19 +82,19 @@
                     <!-- Dynamic Door/Stair Width Inputs -->
                     <div id="exitWidthsContainer" class="space-y-4"></div>
 
-                    <div class="flex justify-end">
+                    <!-- Button Row -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                        <!-- Back to Main Menu Button -->
+                        <a href="index.html" class="w-full sm:w-auto px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200 ease-in-out text-center">
+                            Back to Main Menu
+                        </a>
+                        <!-- Calculate Button -->
                         <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-[#703D29] text-white font-bold rounded-lg shadow-md hover:bg-[#5D3120] focus:outline-none focus:ring-2 focus:ring-[#8C5940] transition duration-200 ease-in-out">
                             Calculate
                         </button>
                     </div>
                 </form>
                 
-                <div class="flex justify-start mt-6">
-                    <button id="backToMenuButton" class="px-8 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200 ease-in-out">
-                        Back to Menu
-                    </button>
-                </div>
-
                 <!-- Results Section -->
                 <div id="results" class="mt-8 pt-6 border-t border-gray-300">
                     <h3 class="text-xl font-bold text-gray-900 mb-4">Results</h3>
@@ -105,8 +105,8 @@
                         Copy Results
                     </button>
                 </div>
+            
             </div>
-
         </div>
     </div>
     
@@ -138,7 +138,6 @@
             const calculatorForm = document.getElementById('calculatorForm');
             const resultsContent = document.getElementById('resultsContent');
             const copyButton = document.getElementById('copyButton');
-            const backToMenuButton = document.getElementById('backToMenuButton');
             const numExitsInput = document.getElementById('numExits');
             const exitTypeSelect = document.getElementById('exitType');
             const exitWidthsContainer = document.getElementById('exitWidthsContainer');
@@ -159,7 +158,7 @@
                 const exitType = exitTypeSelect.value;
                 let exitTypeName = exitType.charAt(0).toUpperCase() + exitType.slice(1);
                 if (exitType.startsWith('stairs')) {
-                     exitTypeName = 'Stairs';
+                    exitTypeName = 'Stairs';
                 }
                 exitWidthsContainer.innerHTML = ''; // Clear previous inputs
 
@@ -303,9 +302,6 @@ ${isCompliant ? `✅ Sufficient Width` : `❌ Insufficient Width`} (Effective Wi
             exitTypeSelect.addEventListener('change', generateExitWidthInputs);
             calculatorForm.addEventListener('submit', calculateExitWidth);
             copyButton.addEventListener('click', copyResultsToClipboard);
-            backToMenuButton.addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
 
             // Initial population
             populateData();
@@ -314,4 +310,3 @@ ${isCompliant ? `✅ Sufficient Width` : `❌ Insufficient Width`} (Effective Wi
 
 </body>
 </html>
-
